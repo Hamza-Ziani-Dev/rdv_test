@@ -1,0 +1,61 @@
+<div class="calendar-container">
+  <div class="calendar">
+    <div class="calendar-headline">
+      <div class="calendar-headline-month">
+        {{ firstDayOfActiveMonth().monthShort }},
+        {{ firstDayOfActiveMonth().year }}
+      </div>
+      <div class="calendar-headline-controls">
+        <div class="calendar-headline-control" (click)="goToPreviousMonth()">
+          «
+        </div>
+        <div
+          class="calendar-headline-control calendar-headline-control-today"
+          (click)="goToToday()"
+        >
+          Today
+        </div>
+        <div class="calendar-headline-control" (click)="goToNextMonth()">»</div>
+      </div>
+    </div>
+    <div class="calendar-weeks-grid">
+      <div *ngFor="let weekDay of weekDays(); let i = index" class="calendar-weeks-grid-cell">
+        {{ weekDay }}
+      </div>
+    </div>
+    <div class="calendar-grid">
+      <div
+        *ngFor="let dayOfMonth of daysOfMonth(); let i = index"
+        [ngClass]="{
+          'calendar-grid-cell': true,
+          'calendar-grid-cell-active': activeDay()?.toISODate() === dayOfMonth.toISODate(),
+          'calendar-grid-cell-inactive': dayOfMonth.month !== firstDayOfActiveMonth().month,
+          'calendar-grid-cell-selected': activeDayMeetings().length > 0 && activeDay()?.toISODate() === dayOfMonth.toISODate()
+        }"
+        (click)="activeDay.set(dayOfMonth)"
+      >
+        {{ dayOfMonth.day }}
+      </div>
+    </div>
+  </div>
+  <div class="schedule">
+    <div class="schedule-headline">
+      <div *ngIf="activeDay(); else noDaySelected">
+        {{ activeDay()?.toLocaleString(DATE_MED) }}
+      </div>
+      <ng-template #noDaySelected>
+        <div>Please select a day</div>
+      </ng-template>
+    </div>
+    <div>
+      <div *ngIf="activeDay() && activeDayMeetings().length === 0">
+        No Planned Meetings today
+      </div>
+      <div *ngIf="activeDay() && activeDayMeetings().length > 0">
+        <div *ngFor="let meeting of activeDayMeetings(); let i = index">
+          {{ meeting }}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
